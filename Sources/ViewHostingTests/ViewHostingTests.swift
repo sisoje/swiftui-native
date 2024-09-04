@@ -37,7 +37,7 @@ final class ViewHostingTests: XCTestCase {}
         
         let one = try await One.host { One() }
         one.numbers.append(1)
-        try await Two.onBodyEvaluation()
+        try await Two.onUpdate()
     }
     
     func testOnAppear() async throws {
@@ -66,7 +66,7 @@ final class ViewHostingTests: XCTestCase {}
         
         let view = try await TaskView.host { TaskView() }
         XCTAssertEqual(view.number, 0)
-        try await TaskView.onBodyEvaluation()
+        try await TaskView.onUpdate()
         XCTAssertEqual(view.number, 1)
     }
     

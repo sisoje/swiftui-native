@@ -2,14 +2,14 @@ import SwiftUI
 @testable import ViewHostingApp
 
 @MainActor extension View {
-    @discardableResult static func onBodyEvaluation(timeout: TimeInterval = 1) async throws -> Self {
+    @discardableResult static func onUpdate(timeout: TimeInterval = 1) async throws -> Self {
         try await NotificationCenter.default.observeBodyEvaluation(timeout: timeout)
     }
 
     static func host(timeout: TimeInterval = 1, content: () -> any View) async throws -> Self {
         try await ProgressView().appear(timeout: timeout)
         content().host()
-        return try await onBodyEvaluation(timeout: timeout)
+        return try await onUpdate(timeout: timeout)
     }
 
     func appear(timeout: TimeInterval = 1) async throws {
