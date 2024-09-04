@@ -1,6 +1,6 @@
-# SwiftUI View Testing Framework
+# SwiftUI View Hosting Framework
 
-[![Swift](https://github.com/sisoje/swiftui-native/actions/workflows/swift.yml/badge.svg)](https://github.com/sisoje/swiftui-native/actions/workflows/swift.yml)
+[![Swift](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml/badge.svg)](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml)
 
 ## Introduction
 
@@ -14,24 +14,13 @@ This framework provides a powerful solution for testing SwiftUI views, with a pa
 - **Asynchronous Testing**: Support for testing asynchronous operations in SwiftUI views.
 - **Navigation Testing**: Capabilities to test NavigationStack and navigation flow.
 
-## Project Structure
-
-The project is structured as follows:
-
-- `HostApp/`: Contains the host application for testing
-  - `HostAppMain.swift`: Defines the main app entry point as an extension of ViewHostingApp
-  - `HostAppTests.swift`: Empty file needed for the test target (all test cases are implemented in the ViewHostingTests framework)
-- `Sources/`: Contains the main source code for the framework
-  - `ViewHostingApp/`: Core hosting functionality
-  - `ViewHostingTests/`: Testing utilities and extensions
-
 ## Installation
 
 Add the following to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/sisoje/swiftui-native.git", from: "1.0.0")
+    .package(url: "https://github.com/sisoje/swiftui-view-hosting.git", from: "1.0.0")
 ]
 ```
 
@@ -46,18 +35,38 @@ import ViewHostingTests
 
 ## Usage Guide
 
+### Hosting a View
+
+To host a view for testing:
+
+```swift
+let view = try await MyView.host { MyView() }
+```
+
+### Testing State Changes
+
+To test state changes after an action:
+
+```swift
+let view = try await MyView.host { MyView() }
+// Perform some action that should change the state
+try await MyView.onUpdate()
+// Assert the new state
+```
+
 ### Testing Navigation
 
 Here's an example of how to test navigation using NavigationStack:
 
 ```swift
+@available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
 func testNavigation() async throws {
     struct One: View {
         @State var numbers: [Int] = []
         var body: some View {
             let _ = postBodyEvaluation()
             NavigationStack(path: $numbers) {
-                Text("One")
+                ProgressView()
                     .navigationDestination(
                         for: Int.self,
                         destination: Two.init
@@ -65,7 +74,7 @@ func testNavigation() async throws {
             }
         }
     }
-
+        
     struct Two: View {
         let number: Int
         var body: some View {
@@ -74,9 +83,9 @@ func testNavigation() async throws {
         }
     }
     
-    let one = try await One.hostedView { One() }
+    let one = try await One.host { One() }
     one.numbers.append(1)
-    try await Two.onBodyEvaluation()
+    try await Two.onUpdate()
 }
 ```
 
@@ -85,30 +94,28 @@ func testNavigation() async throws {
 Test asynchronous operations using the `task` modifier:
 
 ```swift
-@MainActor func testTask() async throws {
-    struct DummyView: View {
+func testTask() async throws {
+    struct TaskView: View {
         @State var number = 0
         var body: some View {
             let _ = postBodyEvaluation()
-            Text(number.description).task { number = number + 1 }
+            Text(number.description)
+                .task { number += 1 }
         }
     }
     
-    let view = try await DummyView.hostedView { DummyView() }
+    let view = try await TaskView.host { TaskView() }
     XCTAssertEqual(view.number, 0)
-    try await DummyView.onBodyEvaluation()
+    try await TaskView.onUpdate()
     XCTAssertEqual(view.number, 1)
 }
 ```
 
 ## Advanced Features
 
-- **Body Evaluation Observation**: Use `postBodyEvaluation()` and `onBodyEvaluation()` to track view updates.
-- **Hosted View Testing**: Utilize `hostedView` for testing views with internal state in a controlled environment.
-
-## Future Development
-
-We are planning to develop ViewInspection features, which will provide more detailed introspection capabilities for SwiftUI views. Stay tuned for updates!
+- **Body Evaluation Observation**: Use `postBodyEvaluation()` in your view's body to enable state tracking.
+- **Update Waiting**: Use `onUpdate()` to wait for and capture view updates.
+- **Appearance Testing**: The `appear()` function allows testing of `onAppear` behavior.
 
 ## Contributing
 
