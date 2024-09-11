@@ -5,7 +5,7 @@ protocol SelfHostedView: View {}
 @MainActor extension SelfHostedView {
     public var body: some View {
         let _ = postBodyEvaluation()
-        return EmptyView()
+        return ProgressView()
     }
 
     func hosted(timeout: TimeInterval = 1) async throws -> Self {
