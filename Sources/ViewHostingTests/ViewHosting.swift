@@ -7,7 +7,7 @@ import SwiftUI
     }
 
     static func hosted(timeout: TimeInterval = 1, content: () -> any View) async throws -> Self {
-        try await EmptyView().appear(timeout: timeout)
+        try await EmptyHostedView().appear(timeout: timeout)
         content().host()
         return try await onUpdate(timeout: timeout)
     }

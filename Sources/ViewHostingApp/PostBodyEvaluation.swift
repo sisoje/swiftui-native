@@ -1,7 +1,7 @@
 @preconcurrency import SwiftUI
 
 extension Notification.Name {
-    static let bodyEvaluation = Notification.Name("com.ViewHosting.bodyEvaluation")
+    static let bodyEvaluation = Notification.Name("com.ViewHosting.BodyEvaluation")
 }
 
 struct BodyEvaluation: Sendable {
