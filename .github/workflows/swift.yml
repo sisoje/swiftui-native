@@ -30,7 +30,7 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
-        name: testrun
+        name: testrun-${{ matrix.xcode-version }}
         path: |
           ./
           !./.git
