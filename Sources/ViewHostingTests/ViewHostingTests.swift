@@ -4,16 +4,9 @@ import XCTest
 final class ViewHostingTests: XCTestCase {}
 
 @MainActor extension ViewHostingTests {
-    struct MinimalView: View {
-        var body: some View {
-            let _ = postBodyEvaluation()
-            ProgressView()
-        }
-    }
-    
     @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
     func testNavigation() async throws {
-        struct One: View {
+        struct One: SelfHostedView {
             @State var numbers: [Int] = []
             var body: some View {
                 let _ = postBodyEvaluation()
@@ -21,27 +14,19 @@ final class ViewHostingTests: XCTestCase {}
                     ProgressView()
                         .navigationDestination(
                             for: Int.self,
-                            destination: Two.init
+                            destination: { _ in EmptyHostedView() }
                         )
                 }
             }
         }
-            
-        struct Two: View {
-            let number: Int
-            var body: some View {
-                let _ = postBodyEvaluation()
-                Text(number.description)
-            }
-        }
         
-        let one = try await One.host { One() }
+        let one = try await One().hosted()
         one.numbers.append(1)
-        try await Two.onUpdate()
+        try await EmptyHostedView.onUpdate()
     }
     
     func testOnAppear() async throws {
-        struct AppearingView: View {
+        struct AppearingView: SelfHostedView {
             @State var number = 0
             var body: some View {
                 let _ = postBodyEvaluation()
@@ -50,12 +35,12 @@ final class ViewHostingTests: XCTestCase {}
             }
         }
         
-        let view = try await AppearingView.host { AppearingView() }
+        let view = try await AppearingView().hosted()
         XCTAssertEqual(view.number, 1)
     }
     
     func testTask() async throws {
-        struct TaskView: View {
+        struct TaskView: SelfHostedView {
             @State var number = 0
             var body: some View {
                 let _ = postBodyEvaluation()
@@ -64,22 +49,32 @@ final class ViewHostingTests: XCTestCase {}
             }
         }
         
-        let view = try await TaskView.host { TaskView() }
+        let view = try await TaskView().hosted()
         XCTAssertEqual(view.number, 0)
         try await TaskView.onUpdate()
         XCTAssertEqual(view.number, 1)
     }
     
     func testHostedView() async throws {
-        _ = try await MinimalView.host { MinimalView() }
+        _ = try await EmptyHostedView().hosted()
     }
     
     func testWrongView() async throws {
         do {
-            _ = try await Text.host { MinimalView() }
+            _ = try await Text.hosted { EmptyHostedView() }
             XCTFail("we expected this to fail")
         }
         catch ViewHostingError.bodyEvaluationTypeMismatch {}
         catch { throw error }
+    }
+    
+    func testDynamicProperty() async throws {
+        @propertyWrapper struct DummyWrapper: DynamicProperty, SelfHostedView {
+            @State var wrappedValue = 0
+        }
+        let hosted = try await DummyWrapper().hosted()
+        XCTAssertEqual(hosted.wrappedValue, 0)
+        hosted.wrappedValue += 1
+        XCTAssertEqual(hosted.wrappedValue, 1)
     }
 }

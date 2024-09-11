@@ -6,8 +6,8 @@ import SwiftUI
         try await NotificationCenter.default.observeBodyEvaluation(timeout: timeout)
     }
 
-    static func host(timeout: TimeInterval = 1, content: () -> any View) async throws -> Self {
-        try await ProgressView().appear(timeout: timeout)
+    static func hosted(timeout: TimeInterval = 1, content: () -> any View) async throws -> Self {
+        try await EmptyView().appear(timeout: timeout)
         content().host()
         return try await onUpdate(timeout: timeout)
     }
