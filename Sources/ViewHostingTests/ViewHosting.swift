@@ -7,22 +7,15 @@ import SwiftUI
     }
 
     static func hosted(timeout: TimeInterval = 1, content: () -> any View) async throws -> Self {
-        try await EmptyHostedView().appear(timeout: timeout)
+        await EmptyHostedView().appear()
         content().host()
         return try await onUpdate(timeout: timeout)
     }
 
-    func appear(timeout: TimeInterval = 1) async throws {
-        let waitOnAppear = Task {
-            do {
-                try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
-                throw ViewHostingError.onAppearTimeout
-            }
-            catch is CancellationError {}
-            catch { throw error }
+    func appear() async {
+        await withCheckedContinuation {
+            onAppear(perform: $0.resume).host()
         }
-        onAppear(perform: waitOnAppear.cancel).host()
-        try await waitOnAppear.value
     }
 
     func host() {
