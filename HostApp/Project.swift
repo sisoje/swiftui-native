@@ -1,6 +1,6 @@
 import ProjectDescription
 
-let dest: Set<Destination> = [.iPhone, .mac, .macCatalyst, .appleWatch, .appleTv, .appleVision]
+let dest: Set<Destination> = [.iPhone, .mac, .appleWatch, .appleTv, .appleVision]
 
 let project = Project(
     name: "HostApp",

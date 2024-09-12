@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         xcode-version: ['15']
-        platform: [macOS, Catalyst, iOS, tvOS, watchOS, visionOS]
+        platform: [macOS, iOS, tvOS, watchOS, visionOS]
 
     runs-on: macos-latest
 
@@ -40,11 +40,6 @@ jobs:
       run: sh test_project.sh 'platform=macOS,name=Any Mac'
       working-directory: ./HostApp
       if: ${{ matrix.platform == 'macOS' }}
-
-    - name: Test macOS (Mac Catalyst)
-      run: sh test_project.sh 'platform=macOS,varint=Mac Catalyst,name=Any Mac'
-      working-directory: ./HostApp
-      if: ${{ matrix.platform == 'Catalyst' }}
 
     - name: Test iOS
       run: sh test_project.sh 'platform=iOS Simulator,name=Any iOS Simulator Device'
