@@ -4,7 +4,7 @@ import SwiftUI
 extension View where Self: DynamicProperty {
     public var body: some View {
         let _ = postBodyEvaluation()
-        return EmptyView()
+        return ProgressView()
     }
 }
 
@@ -25,7 +25,7 @@ extension View where Self: DynamicProperty {
     
     static func resetHost() async {
         await withCheckedContinuation { cont in
-            ProgressView().onAppear {
+            EmptyView().onAppear {
                 EmptyView().host()
             }
             .onDisappear {
