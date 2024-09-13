@@ -80,4 +80,15 @@ final class ViewHostingTests: XCTestCase {
         hosted.wrappedValue += 1
         XCTAssertEqual(hosted.wrappedValue, 1)
     }
+    
+    func testPerformanceOfFetchData() {
+        measure {
+            let expectation = expectation(description: UUID().uuidString)
+            Task {
+                _ = try! await EmptyHostedView1().hosted()
+                expectation.fulfill()
+            }
+            wait(for: [expectation], timeout: 1) // Timeout for the async task to complete
+        }
+    }
 }
