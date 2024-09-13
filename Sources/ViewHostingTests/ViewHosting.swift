@@ -1,7 +1,18 @@
 import SwiftUI
 @testable import ViewHostingApp
 
+extension View where Self: DynamicProperty {
+    public var body: some View {
+        let _ = postBodyEvaluation()
+        return EmptyView()
+    }
+}
+
 @MainActor extension View {
+    func hosted(timeout: TimeInterval = 1) async throws -> Self {
+        try await Self.hosted(timeout: timeout) { self }
+    }
+    
     @discardableResult static func onUpdate(timeout: TimeInterval = 1) async throws -> Self {
         try await NotificationCenter.default.observeBodyEvaluation(timeout: timeout)
     }

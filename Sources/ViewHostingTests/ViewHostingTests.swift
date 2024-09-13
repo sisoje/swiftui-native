@@ -6,7 +6,7 @@ final class ViewHostingTests: XCTestCase {}
 @MainActor extension ViewHostingTests {
     @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
     func testNavigation() async throws {
-        struct One: SelfHostedView {
+        struct One: View {
             @State var numbers: [Int] = []
             var body: some View {
                 let _ = postBodyEvaluation()
@@ -14,7 +14,7 @@ final class ViewHostingTests: XCTestCase {}
                     ProgressView()
                         .navigationDestination(
                             for: Int.self,
-                            destination: { _ in EmptyHostedView() }
+                            destination: { _ in EmptyHostedView1() }
                         )
                 }
             }
@@ -22,11 +22,11 @@ final class ViewHostingTests: XCTestCase {}
         
         let one = try await One().hosted()
         one.numbers.append(1)
-        try await EmptyHostedView.onUpdate()
+        try await EmptyHostedView1.onUpdate()
     }
     
     func testOnAppear() async throws {
-        struct AppearingView: SelfHostedView {
+        struct AppearingView: View {
             @State var number = 0
             var body: some View {
                 let _ = postBodyEvaluation()
@@ -40,7 +40,7 @@ final class ViewHostingTests: XCTestCase {}
     }
     
     func testTask() async throws {
-        struct TaskView: SelfHostedView {
+        struct TaskView: View {
             @State var number = 0
             var body: some View {
                 let _ = postBodyEvaluation()
@@ -56,12 +56,12 @@ final class ViewHostingTests: XCTestCase {}
     }
     
     func testHostedView() async throws {
-        _ = try await EmptyHostedView().hosted()
+        _ = try await EmptyHostedView1().hosted()
     }
     
     func testWrongView() async throws {
         do {
-            _ = try await Text.hosted { EmptyHostedView() }
+            _ = try await EmptyHostedView1.hosted { EmptyHostedView2() }
             XCTFail("we expected this to fail")
         }
         catch ViewHostingError.bodyEvaluationTypeMismatch {}
@@ -69,7 +69,7 @@ final class ViewHostingTests: XCTestCase {}
     }
     
     func testDynamicProperty() async throws {
-        @propertyWrapper struct DummyWrapper: DynamicProperty, SelfHostedView {
+        @propertyWrapper struct DummyWrapper: DynamicProperty, View {
             @State var wrappedValue = 0
         }
         let hosted = try await DummyWrapper().hosted()
