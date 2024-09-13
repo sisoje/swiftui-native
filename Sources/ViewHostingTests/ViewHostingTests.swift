@@ -1,7 +1,10 @@
 import SwiftUI
 import XCTest
 
-final class ViewHostingTests: XCTestCase {}
+final class ViewHostingTests: XCTestCase {
+    struct EmptyHostedView1: View, DynamicProperty {}
+    struct EmptyHostedView2: View, DynamicProperty {}
+}
 
 @MainActor extension ViewHostingTests {
     @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
