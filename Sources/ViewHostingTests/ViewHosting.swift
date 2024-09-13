@@ -25,7 +25,7 @@ extension View where Self: DynamicProperty {
     
     static func resetHost() async {
         await withCheckedContinuation { cont in
-            EmptyView().onAppear {
+            ProgressView().onAppear {
                 EmptyView().host()
             }
             .onDisappear {
