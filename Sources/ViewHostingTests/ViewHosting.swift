@@ -7,14 +7,19 @@ import SwiftUI
     }
 
     static func hosted(timeout: TimeInterval = 1, content: () -> any View) async throws -> Self {
-        await EmptyHostedView().appear()
+        await EmptyView().afterAppear()
         content().host()
         return try await onUpdate(timeout: timeout)
     }
 
-    func appear() async {
-        await withCheckedContinuation {
-            onAppear(perform: $0.resume).host()
+    func afterAppear() async {
+        await withCheckedContinuation { cont in
+            task {
+                await MainActor.run {
+                    cont.resume()
+                }
+            }
+            .host()
         }
     }
 
