@@ -4,7 +4,6 @@ import SwiftUI
 struct DynamicPropertyView<D: DynamicProperty>: View {
     let property: D
     let initialized: (Self) -> Void
-    
     var body: some View {
         Color.clear
             .onAppear {
