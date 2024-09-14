@@ -10,7 +10,7 @@ extension NotificationCenter {
             post(name: .bodyEvaluation, object: nil)
         }
 
-        for await bodyEvaluation in notifications(named: .bodyEvaluation).map ({ $0.object as? BodyEvaluation }) {
+        for await bodyEvaluation in notifications(named: .bodyEvaluation).map({ $0.object as? BodyEvaluation }) {
             timeoutTask.cancel()
             guard let view = bodyEvaluation?.view else {
                 // Make sure you added postBodyEvaluation() in the body of the view
