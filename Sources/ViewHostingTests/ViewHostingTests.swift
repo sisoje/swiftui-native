@@ -14,9 +14,6 @@ extension TestView {
 final class ViewHostingTests: XCTestCase {
     struct EmptyHostedView1: TestView {}
     struct EmptyHostedView2: TestView {}
-    @propertyWrapper struct DummyWrapper: DynamicProperty {
-        @State var wrappedValue = 0
-    }
 }
 
 @MainActor extension ViewHostingTests {
@@ -76,8 +73,8 @@ final class ViewHostingTests: XCTestCase {
     }
 
     func testDynamicProperty() async throws {
-        let hosted1 = await DummyWrapper().hosted()
-        let hosted2 = await DummyWrapper().hosted()
+        let hosted1 = await State(initialValue: 0).hosted()
+        let hosted2 = await State(initialValue: 0).hosted()
         _ = try await EmptyHostedView1().hosted()
         for hosted in [hosted1, hosted2] {
             XCTAssertEqual(hosted.wrappedValue, 0)
@@ -101,7 +98,7 @@ final class ViewHostingTests: XCTestCase {
         measure {
             let expectation = expectation(description: UUID().uuidString)
             Task {
-                _ = await DummyWrapper().hosted()
+                _ = await State(wrappedValue: 1).hosted()
                 expectation.fulfill()
             }
             wait(for: [expectation], timeout: 1)
