@@ -72,10 +72,9 @@ final class ViewHostingTests: XCTestCase {
         _ = try await EmptyHostedView1().hosted()
     }
 
-    func testDynamicProperty() async throws {
+    func testDynamicProperty() async {
         let hosted1 = await State(initialValue: 0).hosted()
         let hosted2 = await State(initialValue: 0).hosted()
-        _ = try await EmptyHostedView1().hosted()
         for hosted in [hosted1, hosted2] {
             XCTAssertEqual(hosted.wrappedValue, 0)
             hosted.wrappedValue += 1
