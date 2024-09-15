@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: xcodebuild Test ${{ matrix.platform }}
-      run: xcodebuild test -scheme ViewInspection -destination 'platform=${{ matrix.platform }}'
+      run: xcodebuild test -scheme ViewHosting-Package -destination 'platform=${{ matrix.platform }}'
       
   build:
     strategy:
