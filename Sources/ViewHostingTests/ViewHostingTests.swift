@@ -12,7 +12,7 @@ extension TestView {
 
 final class ViewHostingTests: XCTestCase {
     @MainActor override func setUp() async throws {
-        if ViewHosting.host == nil {
+        guard ViewHosting.prepareHosting() else {
             throw XCTSkip("no hosting available")
         }
     }
