@@ -2,8 +2,7 @@ import SwiftUI
 @testable import ViewHostingApp
 import XCTest
 
-protocol TestView: BodyPostingView {}
-
+protocol TestView: View {}
 extension TestView {
     var body: some View {
         let _ = bodyPost()
@@ -12,6 +11,12 @@ extension TestView {
 }
 
 final class ViewHostingTests: XCTestCase {
+    @MainActor override func setUp() async throws {
+        if ViewHosting.host == nil {
+            throw XCTSkip("no hosting available")
+        }
+    }
+
     struct EmptyHostedView1: TestView {}
     struct EmptyHostedView2: TestView {}
 }
@@ -19,7 +24,7 @@ final class ViewHostingTests: XCTestCase {
 @MainActor extension ViewHostingTests {
     @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
     func testNavigation() async throws {
-        struct One: BodyPostingView {
+        struct One: View {
             @State var numbers: [Int] = []
             var body: some View {
                 let _ = bodyPost()
@@ -39,7 +44,7 @@ final class ViewHostingTests: XCTestCase {
     }
 
     func testOnAppear() async throws {
-        struct AppearingView: BodyPostingView {
+        struct AppearingView: View {
             @State var number = 0
             var body: some View {
                 let _ = bodyPost()
@@ -53,7 +58,7 @@ final class ViewHostingTests: XCTestCase {
     }
 
     func testTask() async throws {
-        struct TaskView: BodyPostingView {
+        struct TaskView: View {
             @State var number = 0
             var body: some View {
                 let _ = bodyPost()

@@ -1,10 +1,6 @@
 import SwiftUI
 
-public protocol BodyPostingView: View {
-    func bodyPost()
-}
-
-public extension BodyPostingView {
+public extension View {
     func bodyPost() {
         assert({
             Self._printChanges()

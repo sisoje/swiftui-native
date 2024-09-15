@@ -1,7 +1,7 @@
 import SwiftUI
 @testable import ViewHostingApp
 
-@MainActor extension BodyPostingView {
+@MainActor extension View {
     func hosted(timeout: TimeInterval = 1) async throws -> Self {
         try await Self.hosted(timeout: timeout) { self }
     }
@@ -14,10 +14,8 @@ import SwiftUI
         content().host()
         return try await onBodyPosting(timeout: timeout)
     }
-}
 
-@MainActor extension View {
     func host() {
-        ViewHostingApp.shared.view = id(UUID())
+        ViewHosting.host(id(UUID()))
     }
 }

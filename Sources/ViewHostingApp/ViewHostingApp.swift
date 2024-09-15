@@ -2,10 +2,9 @@ import SwiftUI
 
 public struct ViewHostingApp: App {
     public init() {}
-    @State var view: any View = EmptyView()
-    nonisolated(unsafe) static var shared: Self!
+    @State private var view: any View = EmptyView()
     public var body: some Scene {
-        let _ = Self.shared = self
+        let _ = ViewHosting.host = { view = $0 }
         WindowGroup {
             AnyView(view)
         }
