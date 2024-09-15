@@ -10,6 +10,19 @@ on:
     branches: [ "main" ]
 
 jobs:
+  test_on_simulators:
+    strategy:
+      matrix:
+        platform: [iOS, tvOS, visionOS]
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: xcodebuild Test ${{ matrix.platform }}
+      run: xcodebuild test -scheme ViewInspection -destination 'platform=${{ matrix.platform }}'
+      
   build:
     strategy:
       matrix:
