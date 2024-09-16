@@ -25,5 +25,10 @@ let package = Package(
             dependencies: ["ViewHostingApp"],
             swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
         ),
+        .testTarget(
+            name: "Tests",
+            dependencies: ["ViewHostingTests"],
+            swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
+        ),
     ]
 )
