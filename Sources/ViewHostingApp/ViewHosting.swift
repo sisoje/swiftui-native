@@ -6,8 +6,6 @@ enum ViewHosting {
 }
 
 #if canImport(UIKit) && !os(watchOS)
-    import UIKit
-
     extension ViewHosting {
         @MainActor private static var window: UIWindow!
 
