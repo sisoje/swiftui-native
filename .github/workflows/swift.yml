@@ -19,10 +19,10 @@ env:
   visionOS: 'platform=visionOS Simulator,name=Apple Vision Pro'
 
 jobs:
-  test_just_package:
+  test_window_hosting:
     strategy:
       matrix:
-        xcode-version: ['15', 'latest']
+        xcode-version: ['15', '16']
         platform: [iOS, tvOS, visionOS]
 
     runs-on: macos-latest
@@ -42,10 +42,10 @@ jobs:
         show-passed-tests: false
       if: failure()
       
-  test_with_hostapp:
+  test_app_hosting:
     strategy:
       matrix:
-        xcode-version: ['15', 'latest']
+        xcode-version: ['15', '16']
         platform: [macOS, iOS, tvOS, watchOS, visionOS]
 
     runs-on: macos-latest
