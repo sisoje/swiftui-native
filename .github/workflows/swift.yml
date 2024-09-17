@@ -13,8 +13,8 @@ on:
     
 env:
   macOS: 'platform=macOS'
-  watchOS: 'platform=watchOS Simulator,name=Apple Watch Series 8 (45mm)'
-  iOS: 'platform=iOS Simulator,name=iPhone 15'
+  watchOS: 'platform=watchOS Simulator,name=Apple Watch Ultra'
+  iOS: 'platform=iOS Simulator,name=iPhone'
   tvOS: 'platform=tvOS Simulator,name=Apple TV'
   visionOS: 'platform=visionOS Simulator,name=Apple Vision Pro'
 
@@ -22,7 +22,7 @@ jobs:
   test_just_package:
     strategy:
       matrix:
-        xcode-version: ['15', '16']
+        xcode-version: ['15', 'latest']
         platform: [iOS, tvOS, visionOS]
 
     runs-on: macos-latest
@@ -34,12 +34,18 @@ jobs:
         xcode-version: ${{ matrix.xcode-version }}
 
     - name: xcodebuild Test ${{ matrix.platform }}
-      run: xcodebuild test -scheme ViewHosting-Package -destination '${{ env[matrix.platform] }}'
+      run: xcodebuild test -scheme ViewHosting-Package -destination '${{ env[matrix.platform] }}' -resultBundlePath TestResults.xcresult
+
+    - uses: kishikawakatsumi/xcresulttool@v1
+      with:
+        path: HostApp/TestResults.xcresult
+        show-passed-tests: false
+      if: failure()
       
   test_with_hostapp:
     strategy:
       matrix:
-        xcode-version: ['15', '16']
+        xcode-version: ['15', 'latest']
         platform: [macOS, iOS, tvOS, watchOS, visionOS]
 
     runs-on: macos-latest
@@ -65,7 +71,7 @@ jobs:
     - name: Test ${{ matrix.platform }}
       run: sh test_project.sh '${{ env[matrix.platform] }}'
       working-directory: ./HostApp
-      if: ${{ matrix.platform != 'macOS' || matrix.xcode-version != '16' }}
+      if: ${{ matrix.platform != 'macOS' || matrix.xcode-version == '15' }}
 
     - uses: kishikawakatsumi/xcresulttool@v1
       with:
