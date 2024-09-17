@@ -22,7 +22,7 @@ jobs:
   test_window_hosting:
     strategy:
       matrix:
-        xcode-version: ['15', '16']
+        xcode-version: ['15', '16', 'latest']
         platform: [iOS, tvOS, visionOS]
 
     runs-on: macos-latest
@@ -45,7 +45,7 @@ jobs:
   test_app_hosting:
     strategy:
       matrix:
-        xcode-version: ['15', '16']
+        xcode-version: ['15', '16', 'latest']
         platform: [macOS, iOS, tvOS, watchOS, visionOS]
 
     runs-on: macos-latest
