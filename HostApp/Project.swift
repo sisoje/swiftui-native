@@ -10,7 +10,12 @@ let project = Project(
             destinations: dest,
             product: .app,
             bundleId: "io.tuist.HostApp",
-            infoPlist: .default,
+            infoPlist: .extendingDefault(
+                with: [
+                    "WKApplication": true,
+                    "WKWatchOnly": true,
+                ]
+            ),
             sources: ["HostApp.swift"],
             resources: [],
             dependencies: [
