@@ -5,5 +5,6 @@ xcodebuild \
 -project HostApp.xcodeproj \
 -scheme HostApp \
 -destination "$1" \
+-disableAutomaticPackageResolution \
 -resultBundlePath TestResults.xcresult \
 test

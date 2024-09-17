@@ -34,7 +34,7 @@ jobs:
         xcode-version: ${{ matrix.xcode-version }}
 
     - name: xcodebuild Test ${{ matrix.platform }}
-      run: xcodebuild test -scheme ViewHosting-Package -destination '${{ env[matrix.platform] }}' -resultBundlePath TestResults.xcresult
+      run: xcodebuild test -scheme ViewHosting-Package -destination '${{ env[matrix.platform] }}' -resultBundlePath TestResults.xcresult -disableAutomaticPackageResolution
 
     - uses: kishikawakatsumi/xcresulttool@v1
       with:
