@@ -13,8 +13,8 @@ on:
     
 env:
   macOS: 'platform=macOS'
-  watchOS: 'platform=watchOS Simulator,name=Apple Watch Ultra'
-  iOS: 'platform=iOS Simulator,name=iPhone'
+  watchOS: 'platform=watchOS Simulator,name=Apple Watch Series 9 (45mm)'
+  iOS: 'platform=iOS Simulator,name=iPhone 15'
   tvOS: 'platform=tvOS Simulator,name=Apple TV'
   visionOS: 'platform=visionOS Simulator,name=Apple Vision Pro'
 
