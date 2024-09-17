@@ -8,25 +8,38 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  schedule:
+    - cron: '0 0 * * *'
+    
+env:
+  macOS: 'platform=macOS'
+  watchOS: 'platform=watchOS Simulator,name=Apple Watch Series 8 (45mm)'
+  iOS: 'platform=iOS Simulator,name=iPhone 15'
+  tvOS: 'platform=tvOS Simulator,name=Apple TV'
+  visionOS: 'platform=visionOS Simulator,name=Apple Vision Pro'
 
 jobs:
-  test_on_simulators:
+  test_just_package:
     strategy:
       matrix:
+        xcode-version: ['15', '16']
         platform: [iOS, tvOS, visionOS]
 
     runs-on: macos-latest
-
+    
     steps:
     - uses: actions/checkout@v4
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: ${{ matrix.xcode-version }}
 
     - name: xcodebuild Test ${{ matrix.platform }}
-      run: xcodebuild test -scheme ViewHosting-Package -destination 'platform=${{ matrix.platform }}'
+      run: xcodebuild test -scheme ViewHosting-Package -destination '${{ env[matrix.platform] }}'
       
-  build:
+  test_with_hostapp:
     strategy:
       matrix:
-        xcode-version: ['15']
+        xcode-version: ['15', '16']
         platform: [macOS, iOS, tvOS, watchOS, visionOS]
 
     runs-on: macos-latest
@@ -49,30 +62,10 @@ jobs:
           ./
           !./.git
 
-    - name: Test macOS
-      run: sh test_project.sh 'platform=macOS,name=Any Mac'
+    - name: Test ${{ matrix.platform }}
+      run: sh test_project.sh '${{ env[matrix.platform] }}'
       working-directory: ./HostApp
-      if: ${{ matrix.platform == 'macOS' }}
-
-    - name: Test iOS
-      run: sh test_project.sh 'platform=iOS Simulator,name=Any iOS Simulator Device'
-      working-directory: ./HostApp
-      if: ${{ matrix.platform == 'iOS' }}
-
-    - name: Test tvOS
-      run: sh test_project.sh 'platform=tvOS Simulator,name=Any tvOS Simulator Device'
-      working-directory: ./HostApp
-      if: ${{ matrix.platform == 'tvOS' }}
-
-    - name: Test watchOS
-      run: sh test_project.sh 'platform=watchOS Simulator,name=Any watchOS Simulator Device'
-      working-directory: ./HostApp
-      if: ${{ matrix.platform == 'watchOS' }}
-
-    - name: Test visionOS
-      run: sh test_project.sh 'platform=visionOS Simulator,name=Any visionOS Simulator Device'
-      working-directory: ./HostApp
-      if: ${{ matrix.platform == 'visionOS' }}
+      if: ${{ matrix.platform != 'macOS' || matrix.xcode-version != '16' }}
 
     - uses: kishikawakatsumi/xcresulttool@v1
       with:
