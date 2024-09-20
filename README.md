@@ -4,15 +4,14 @@
 
 ## Introduction
 
-This framework provides a powerful solution for testing SwiftUI views, with a particular focus on testing views with changing state. It offers tools for hosting and observing SwiftUI components, enabling developers to verify the correctness and behavior of their user interfaces throughout the view lifecycle.
+This framework provides a streamlined solution for testing SwiftUI views, with a focus on hosting views and accessing their state during tests. It offers tools for hosting SwiftUI components and injecting callbacks, enabling developers to verify the correctness and behavior of their user interfaces.
 
 ## Key Features
 
 - **View Hosting**: APIs for hosting views during tests, ensuring controlled testing environments.
-- **State Change Testing**: Easily test views with changing state, including `@State`, `@Binding`, and other property wrappers.
-- **Lifecycle Event Testing**: Verify the behavior of views during different lifecycle events such as `task` and `onAppear`.
+- **State Access**: Easily access and verify view state during tests.
+- **Dynamic Property Testing**: Support for testing views with `@State`, `@Binding`, and other property wrappers.
 - **Asynchronous Testing**: Support for testing asynchronous operations in SwiftUI views.
-- **Navigation Testing**: Capabilities to test NavigationStack and navigation flow.
 
 ## Installation
 
@@ -24,98 +23,93 @@ dependencies: [
 ]
 ```
 
-Then, import the frameworks in your test files:
+Then, import the framework in your files:
 
 ```swift
-import SwiftUI
-import XCTest
-@testable import ViewHostingApp
-import ViewHostingTests
+import ViewHosting
 ```
 
 ## Usage Guide
 
-### Hosting a View
+### Defining a View
 
-To host a view for testing:
-
-```swift
-let view = try await MyView.host { MyView() }
-```
-
-### Testing State Changes
-
-To test state changes after an action:
+When defining your view, use the `@OnBody` property wrapper:
 
 ```swift
-let view = try await MyView.host { MyView() }
-// Perform some action that should change the state
-try await MyView.onUpdate()
-// Assert the new state
-```
-
-### Testing Navigation
-
-Here's an example of how to test navigation using NavigationStack:
-
-```swift
-@available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
-func testNavigation() async throws {
-    struct One: View {
-        @State var numbers: [Int] = []
-        var body: some View {
-            let _ = postBodyEvaluation()
-            NavigationStack(path: $numbers) {
-                ProgressView()
-                    .navigationDestination(
-                        for: Int.self,
-                        destination: Two.init
-                    )
-            }
-        }
-    }
-        
-    struct Two: View {
-        let number: Int
-        var body: some View {
-            let _ = postBodyEvaluation()
-            Text(number.description)
-        }
-    }
+struct MyView: View {
+    @OnBody<Self> private var onBody
+    @State private var text = ""
     
-    let one = try await One.host { One() }
-    one.numbers.append(1)
-    try await Two.onUpdate()
+    var body: some View {
+        let _ = onBody(self)
+        TextField("Enter text", text: $text)
+    }
 }
 ```
 
-### Testing Task
+### Hosting and Testing a View
 
-Test asynchronous operations using the `task` modifier:
+To host and test a view:
 
 ```swift
-func testTask() async throws {
-    struct TaskView: View {
-        @State var number = 0
-        var body: some View {
-            let _ = postBodyEvaluation()
-            Text(number.description)
-                .task { number += 1 }
-        }
+func testMyView() async throws {
+    let view = try await ViewHosting<MyView>().hosted {
+        MyView()
     }
     
-    let view = try await TaskView.host { TaskView() }
-    XCTAssertEqual(view.number, 0)
-    try await TaskView.onUpdate()
-    XCTAssertEqual(view.number, 1)
+    XCTAssertEqual(view.text, "")
+    view.text = "Hello, World!"
+    XCTAssertEqual(view.text, "Hello, World!")
+}
+```
+
+### Testing Dynamic Properties
+
+You can test dynamic properties independently:
+
+```swift
+func testDynamicProperty() async throws {
+    let state = try await State(initialValue: 0).hosted()
+    XCTAssertEqual(state.wrappedValue, 0)
+    state.wrappedValue += 1
+    XCTAssertEqual(state.wrappedValue, 1)
+}
+```
+
+### Handling Asynchronous Operations
+
+For views with asynchronous operations:
+
+```swift
+struct AsyncView: View {
+    @OnBody<Self> var onBody
+    @State var text = ""
+    func load() async {
+        await MainActor.run {
+            text = "loaded"
+        }
+    }
+    var body: some View {
+        let _ = onBody(self)
+        Text(text)
+    }
+}
+
+func testAsyncView() async throws {
+    let view = try await ViewHosting<AsyncView>().hosted {
+        AsyncView()
+    }
+    XCTAssertEqual(view.text, "")
+    await view.load()
+    XCTAssertEqual(view.text, "loaded")
 }
 ```
 
 ## Advanced Features
 
-- **Body Evaluation Observation**: Use `postBodyEvaluation()` in your view's body to enable state tracking.
-- **Update Waiting**: Use `onUpdate()` to wait for and capture view updates.
-- **Appearance Testing**: The `appear()` function allows testing of `onAppear` behavior.
+- **ViewHosting**: The `ViewHosting` struct manages the hosting and callback injection process.
+- **OnBody Property Wrapper**: `@OnBody` is used within views to enable state access during tests.
+- **Error Handling**: The framework includes custom error types for handling timeouts and missing views.
 
 ## Contributing
 
