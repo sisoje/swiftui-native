@@ -13,6 +13,18 @@ This framework provides a streamlined solution for testing SwiftUI views, with a
 - **Dynamic Property Testing**: Support for testing views with `@State`, `@Binding`, and other property wrappers.
 - **Asynchronous Testing**: Support for testing asynchronous operations in SwiftUI views.
 
+## Important Note
+
+This package relies on an undocumented trick in SwiftUI:
+
+```swift
+private func host(content: () -> any View) {
+    _ = _PreviewHost.makeHost(content: content()).previews
+}
+```
+
+This implementation detail may be subject to change in future SwiftUI updates.
+
 ## Installation
 
 Add the following to your `Package.swift` file:
@@ -23,10 +35,16 @@ dependencies: [
 ]
 ```
 
-Then, import the framework in your files:
+Then, add the following products to your targets:
+
+- Add `ViewHosting` to your production code target.
+- Add `ViewHostingInternal` to your unit testing target.
+
+Import the framework in your files:
 
 ```swift
-import ViewHosting
+import ViewHosting // In production code
+import ViewHostingInternal // In test code
 ```
 
 ## Usage Guide
