@@ -1,4 +1,4 @@
-@preconcurrency import SwiftUI
+import SwiftUI
 
 extension Notification.Name {
     static let bodyPosting = Notification.Name("com.ViewHosting.BodyPosting")

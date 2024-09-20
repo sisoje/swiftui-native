@@ -1,6 +1,3 @@
-# This workflow will build a Swift project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
-
 name: Swift
 
 on:
@@ -13,17 +10,17 @@ on:
     
 env:
   macOS: 'platform=macOS'
-  watchOS: 'platform=watchOS Simulator,name=Apple Watch Series 9 (45mm)'
+  watchOS: 'platform=watchOS Simulator,name=Apple Watch Ultra 2 (49mm)'
   iOS: 'platform=iOS Simulator,name=iPhone 15'
   tvOS: 'platform=tvOS Simulator,name=Apple TV'
   visionOS: 'platform=visionOS Simulator,name=Apple Vision Pro'
 
 jobs:
-  test_window_hosting:
+  test_hosting:
     strategy:
       matrix:
-        xcode-version: ['15', '16', 'latest']
-        platform: [iOS, tvOS, visionOS]
+        xcode-version: ['latest-stable', 'latest']
+        platform: [macOS, iOS, tvOS, watchOS, visionOS]
 
     runs-on: macos-latest
     
@@ -33,48 +30,12 @@ jobs:
       with:
         xcode-version: ${{ matrix.xcode-version }}
 
-    - name: xcodebuild Test ${{ matrix.platform }}
-      run: xcodebuild test -scheme ViewHosting-Package -destination '${{ env[matrix.platform] }}' -resultBundlePath TestResults.xcresult -disableAutomaticPackageResolution
+    - name: Testing ${{ matrix.platform }}
+      run: xcodebuild test -scheme ViewHosting-Package -destination '${{ env[matrix.platform] }}' -resultBundlePath TestResults.xcresult
 
     - uses: kishikawakatsumi/xcresulttool@v1
       with:
-        path: HostApp/TestResults.xcresult
+        path: TestResults.xcresult
         show-passed-tests: false
       if: failure()
       
-  test_app_hosting:
-    strategy:
-      matrix:
-        xcode-version: ['15', '16', 'latest']
-        platform: [macOS, iOS, tvOS, watchOS, visionOS]
-
-    runs-on: macos-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: ${{ matrix.xcode-version }}
-    - uses: jdx/mise-action@v2
-
-    - name: Setup host app using tuist
-      run: sh generate_project.sh
-      working-directory: ./HostApp
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: testrun-${{ matrix.xcode-version }}-${{ matrix.platform }}
-        path: |
-          ./
-          !./.git
-
-    - name: Test ${{ matrix.platform }}
-      run: sh test_project.sh '${{ env[matrix.platform] }}'
-      working-directory: ./HostApp
-      if: ${{ matrix.platform != 'macOS' || matrix.xcode-version == '15' }}
-
-    - uses: kishikawakatsumi/xcresulttool@v1
-      with:
-        path: HostApp/TestResults.xcresult
-        show-passed-tests: false
-      if: failure()

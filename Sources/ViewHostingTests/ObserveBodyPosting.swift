@@ -1,8 +1,8 @@
 import SwiftUI
 @testable import ViewHostingApp
 
-extension NotificationCenter {
-    @MainActor func observeBodyPosting<T: View>(timeout: TimeInterval) async throws -> T {
+@MainActor extension NotificationCenter {
+    func observeBodyPosting<T: View>(timeout: TimeInterval) async throws -> T {
         // normally we get notification immediately but if there is any problem we dont want to wait forever
         let timeoutTask = Task {
             try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
@@ -14,7 +14,7 @@ extension NotificationCenter {
             timeoutTask.cancel()
             guard let view = bodyEvaluation.view else {
                 // Make sure you added postBodyEvaluation() in the body of the view
-                throw BodyPostingError.timeout
+                throw ViewHostingError.timeout
             }
             return view
         }

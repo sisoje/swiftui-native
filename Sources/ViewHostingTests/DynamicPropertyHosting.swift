@@ -1,23 +1,19 @@
 import SwiftUI
 
-struct DynamicPropertyView<D: DynamicProperty>: View, Sendable {
+struct DynamicPropertyView<D: DynamicProperty>: View {
     let property: D
-    let initialized: (Self) -> Void
+    let onBody: (Self) -> Void
     var body: some View {
-        Color.clear
-            .onAppear {
-                initialized(self)
-            }
+        let _ = onBody(self)
     }
 }
 
-extension DynamicProperty {
-    @MainActor func hosted() async -> Self {
-        await withCheckedContinuation { cont in
-            DynamicPropertyView(property: self) {
-                cont.resume(with: .success($0))
-            }
-            .host()
+@MainActor extension DynamicProperty {
+    func hosted() async -> Self {
+        await withCheckedContinuation { continuation in
+            DynamicPropertyView(property: self) { view in
+                continuation.resume(with: .success(view))
+            }.host()
         }.property
     }
 }

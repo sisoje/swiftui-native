@@ -1,7 +1,7 @@
 import SwiftUI
 @testable import ViewHostingApp
 
-@MainActor extension View {
+extension View {
     func hosted(timeout: TimeInterval = 1) async throws -> Self {
         try await Self.hosted(timeout: timeout) { self }
     }
@@ -10,12 +10,14 @@ import SwiftUI
         try await NotificationCenter.default.observeBodyPosting(timeout: timeout)
     }
 
-    static func hosted(timeout: TimeInterval = 1, content: () -> any View) async throws -> Self {
-        content().host()
+    static func hosted(timeout: TimeInterval = 1, content: @escaping () -> any View) async throws -> Self {
+        Task {
+            content().host()
+        }
         return try await onBodyPosting(timeout: timeout)
     }
 
     func host() {
-        ViewHosting.host(id(UUID()))
+        _ = _PreviewHost.makeHost(content: self).previews
     }
 }
