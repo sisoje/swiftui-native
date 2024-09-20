@@ -1,5 +1,5 @@
 import SwiftUI
-@testable import ViewHostingInternal
+@testable import ViewHostingTesting
 import XCTest
 
 extension EmptyHostedView {

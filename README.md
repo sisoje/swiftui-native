@@ -38,13 +38,13 @@ dependencies: [
 Then, add the following products to your targets:
 
 - Add `ViewHosting` to your production code target.
-- Add `ViewHostingInternal` to your unit testing target.
+- Add `ViewHostingTesting` to your unit testing target.
 
 Import the framework in your files:
 
 ```swift
 import ViewHosting // In production code
-import ViewHostingInternal // In test code
+import ViewHostingTesting // In test code
 ```
 
 ## Usage Guide
