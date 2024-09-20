@@ -7,27 +7,27 @@ let package = Package(
     platforms: [.iOS(.v16), .macOS(.v13), .tvOS(.v16), .watchOS(.v9), .visionOS(.v1)],
     products: [
         .library(
-            name: "ViewHostingApp",
-            targets: ["ViewHostingApp"]
+            name: "ViewHosting",
+            targets: ["ViewHosting"]
         ),
         .library(
-            name: "ViewHostingTests",
-            targets: ["ViewHostingTests"]
+            name: "ViewHostingInternal",
+            targets: ["ViewHostingInternal"]
         ),
     ],
     targets: [
         .target(
-            name: "ViewHostingApp",
+            name: "ViewHosting",
             swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
         ),
         .target(
-            name: "ViewHostingTests",
-            dependencies: ["ViewHostingApp"],
+            name: "ViewHostingInternal",
+            dependencies: ["ViewHosting"],
             swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
         ),
         .testTarget(
             name: "Tests",
-            dependencies: ["ViewHostingTests"],
+            dependencies: ["ViewHostingInternal"],
             swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
         ),
     ]

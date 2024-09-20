@@ -1,5 +1,5 @@
 import SwiftUI
-@testable import ViewHostingApp
+@testable import ViewHosting
 
 struct DynamicPropertyView<D: DynamicProperty>: View {
     @OnBody<Self> private var onBody

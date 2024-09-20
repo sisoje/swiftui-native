@@ -1,26 +1,29 @@
 import Combine
-@preconcurrency import SwiftUI
+import SwiftUI
 
-struct BodyPosting<T: View>: @unchecked Sendable {
-    let view: T
-}
-
-struct ViewHosting<T: View>: @unchecked Sendable {
-    private let currentValue = CurrentValueSubject<BodyPosting<T>?, Never>(nil)
+struct ViewHosting<T: View> {
+    struct SendableView: @unchecked Sendable { let view: T }
+    let currentValue = CurrentValueSubject<SendableView?, Never>(nil)
 }
 
 @MainActor extension ViewHosting {
+    private func host(content: () -> any View) {
+        _ = _PreviewHost.makeHost(content: content()).previews
+    }
+
     func hosted(content: () -> any View) async throws -> T {
-        content().onBodyCallback { view in
-            currentValue.send(BodyPosting(view: view))
-        }.host()
+        host {
+            content().onBody { view in
+                currentValue.send(SendableView(view: view))
+            }
+        }
         guard let view = currentValue.value?.view else {
             throw ViewHostingError.missing
         }
         return view
     }
 
-    @discardableResult func onBodyPosting(timeout: TimeInterval = 1) async throws -> T {
+    @discardableResult func onBody(timeout: TimeInterval = 1) async throws -> T {
         let timeoutTask = Task {
             try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
             currentValue.send(nil)

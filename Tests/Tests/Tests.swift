@@ -1,25 +1,23 @@
 import SwiftUI
-@testable import ViewHostingApp
-@testable import ViewHostingTests
+@testable import ViewHostingInternal
 import XCTest
-
-struct EmptyHostedView: View {
-    @OnBody<Self> private var onBody
-    var body: some View {
-        let _ = onBody(self)
-        return Color.clear
-    }
-}
 
 extension EmptyHostedView {
     func hosted() async throws -> Self {
-        try await ViewHosting().hosted {
-            self
-        }
+        try await ViewHosting().hosted { self }
     }
 }
 
 @MainActor final class ViewHostingTests: XCTestCase {
+    func testAsyncText() async throws {
+        let view = try await ViewHosting<AsyncTextView>().hosted {
+            AsyncTextView()
+        }
+        XCTAssertEqual(view.text, "")
+        await view.load()
+        XCTAssertEqual(view.text, "loaded")
+    }
+    
     func testHostedView() async throws {
         _ = try await EmptyHostedView().hosted()
     }
