@@ -2,11 +2,11 @@ import SwiftUI
 @testable import ViewHosting
 
 struct OnBodyModifier<T: View>: ViewModifier {
-    @Environment(\.callbackMap) private var callbackMap
+    @Environment(\.viewBodyCallbackMap) private var viewBodyCallbackMap
     let callback: (T) -> Void
     func body(content: Content) -> some View {
-        content.environment(\.callbackMap, {
-            var ns = callbackMap
+        content.environment(\.viewBodyCallbackMap, {
+            var ns = viewBodyCallbackMap
             ns[] = callback
             return ns
         }())
