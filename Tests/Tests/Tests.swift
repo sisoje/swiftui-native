@@ -1,5 +1,5 @@
 import SwiftUI
-@testable import ViewHostingTesting
+@testable import ViewHostingInternal
 import XCTest
 
 @MainActor final class Tests: XCTestCase {

@@ -16,7 +16,7 @@ This package consists of two main products:
 
 1. **ViewHosting**: This product is intended for use in your production code. It contains the necessary components to make your SwiftUI views testable.
 
-2. **ViewHostingTesting**: This product is designed for use in your test target. It provides the tools needed to host views and test dynamic properties like `@State`, `@Binding`, and others in a controlled testing environment.
+2. **ViewHostingInternal**: This product is designed for use in your test target. It provides the tools needed to host views and test dynamic properties like `@State`, `@Binding`, and others in a controlled testing environment.
 
 ## Key Features
 
@@ -31,13 +31,13 @@ This package consists of two main products:
 To use this package, add the following products to your targets:
 
 - Add `ViewHosting` to your production code target. This will make your views testable.
-- Add `ViewHostingTesting` to your unit testing target. This provides the tools for hosting and testing your views.
+- Add `ViewHostingInternal` to your unit testing target. This provides the tools for hosting and testing your views.
 
 Import the appropriate framework in your files:
 
 ```swift
 import ViewHosting // In production code
-@testable import ViewHostingTesting // In test code
+@testable import ViewHostingInternal // In test code
 ```
 
 ## Usage Guide

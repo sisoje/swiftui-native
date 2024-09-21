@@ -11,8 +11,8 @@ let package = Package(
             targets: ["ViewHosting"]
         ),
         .library(
-            name: "ViewHostingTesting",
-            targets: ["ViewHostingTesting"]
+            name: "ViewHostingInternal",
+            targets: ["ViewHostingInternal"]
         ),
     ],
     targets: [
@@ -21,13 +21,13 @@ let package = Package(
             swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
         ),
         .target(
-            name: "ViewHostingTesting",
+            name: "ViewHostingInternal",
             dependencies: ["ViewHosting"],
             swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
         ),
         .testTarget(
             name: "Tests",
-            dependencies: ["ViewHostingTesting"],
+            dependencies: ["ViewHostingInternal"],
             swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
         ),
     ]
