@@ -2,7 +2,7 @@
 
 [![Swift](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml/badge.svg)](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml)
 
-Requires: Xcode 16
+Requires: Xcode 16  
 Supporting platforms: `[.iOS(.v16), .macOS(.v13), .tvOS(.v16), .watchOS(.v9), .visionOS(.v1)]`
 
 ## Introduction
@@ -37,7 +37,6 @@ private func host(content: () -> any View) {
 While this implementation detail may be subject to change in future SwiftUI updates, it's important to note that there are alternative methods for hosting views that could be implemented if needed:
 
 1. **UIHostingController/NSHostingController**: These platform-specific hosting controllers can be used to integrate SwiftUI views into a UIKit or AppKit environment.
-
 2. **Dedicated Hosting App**: A separate app could be created specifically for testing, which would integrate test views into its view hierarchy.
 
 These alternatives ensure that even if the current method becomes unavailable, the core functionality of this package can be maintained through other hosting techniques. The package's design allows for relatively easy adaptation to new hosting methods if required.
@@ -60,13 +59,13 @@ import ViewHosting // In production code
 
 ### Defining a View
 
-When defining your view, use the `onBody` environment value:
+When defining your view, use the `@Environment(\.onBody)` environment value and ensure it behaves correctly:
 
 ```swift
 struct MyView: View {
-    @OnBody<Self> private var onBody
+    @Environment(\.onBody) private var onBody
     @State private var text = ""
-    
+
     var body: some View {
         let _ = onBody(self)
         TextField("Enter text", text: $text)
@@ -83,7 +82,7 @@ func testMyView() async throws {
     let view = try await ViewHosting<MyView>().hosted {
         MyView()
     }
-    
+
     XCTAssertEqual(view.text, "")
     view.text = "Hello, World!"
     XCTAssertEqual(view.text, "Hello, World!")
@@ -109,13 +108,15 @@ For views with asynchronous operations:
 
 ```swift
 struct AsyncView: View {
-    @OnBody<Self> var onBody
+    @Environment(\.onBody) var onBody
     @State var text = ""
+    
     func load() async {
         await MainActor.run {
             text = "loaded"
         }
     }
+
     var body: some View {
         let _ = onBody(self)
         Text(text)
