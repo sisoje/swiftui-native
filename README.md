@@ -14,7 +14,7 @@ This framework provides a streamlined solution for **unit** testing SwiftUI view
 
 This package consists of two main products:
 
-1. **ViewHosting**: This product is intended for use in your production code. It contains the necessary components to make your SwiftUI views testable.
+1. **ViewHosting**: This product is intended for use in your production code. It contains a single file with the necessary component to make your SwiftUI views testable.
 
 2. **ViewHostingInternal**: This product is designed for use in your test target. It provides the tools needed to host views and test dynamic properties like `@State`, `@Binding`, and others in a controlled testing environment.
 

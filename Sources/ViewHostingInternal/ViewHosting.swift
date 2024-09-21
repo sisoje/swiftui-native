@@ -6,6 +6,20 @@ struct ViewHosting<T: View> {
 }
 
 private extension ViewHosting {
+    // This function uses SwiftUI's undocumented _PreviewHost to create a fully functional
+    // SwiftUI environment. It ensures that all property wrappers are properly initialized
+    // and function as they would in a real SwiftUI app context. While effective, this
+    // approach relies on undocumented APIs and may need to be updated in future SwiftUI versions.
+    //
+    // Note: If this method becomes unavailable in future SwiftUI updates, alternative
+    // hosting methods can be implemented:
+    // 1. UIHostingController/NSHostingController: These platform-specific hosting controllers
+    //    can be used to integrate SwiftUI views into a UIKit or AppKit environment.
+    // 2. Dedicated Hosting App: A separate app could be created specifically for testing,
+    //    which would integrate test views into its view hierarchy.
+    //
+    // These alternatives ensure that the core functionality of this package can be
+    // maintained through other hosting techniques if needed.
     static func host(content: () -> any View) {
         _ = _PreviewHost.makeHost(content: content()).previews
     }
