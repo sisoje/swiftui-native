@@ -2,6 +2,9 @@
 
 [![Swift](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml/badge.svg)](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml)
 
+Requires: Xcode 16
+Supporting platforms: `[.iOS(.v16), .macOS(.v13), .tvOS(.v16), .watchOS(.v9), .visionOS(.v1)]`
+
 ## Introduction
 
 This framework provides a streamlined solution for testing SwiftUI views, with a focus on hosting views and accessing their state during tests. It offers tools for hosting SwiftUI components and injecting callbacks, enabling developers to verify the correctness and behavior of their user interfaces.
@@ -33,15 +36,7 @@ These alternatives ensure that even if the current method becomes unavailable, t
 
 ## Installation
 
-Add the following to your `Package.swift` file:
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/sisoje/swiftui-view-hosting.git", from: "1.0.0")
-]
-```
-
-Then, add the following products to your targets:
+Add the following products to your targets:
 
 - Add `ViewHosting` to your production code target.
 - Add `ViewHostingTesting` to your unit testing target.
@@ -50,7 +45,7 @@ Import the framework in your files:
 
 ```swift
 import ViewHosting // In production code
-import ViewHostingTesting // In test code
+@testable import ViewHostingTesting // In test code
 ```
 
 ## Usage Guide
