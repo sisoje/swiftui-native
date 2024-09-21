@@ -9,6 +9,14 @@ Supporting platforms: `[.iOS(.v16), .macOS(.v13), .tvOS(.v16), .watchOS(.v9), .v
 
 This framework provides a streamlined solution for testing SwiftUI views, with a focus on hosting views and accessing their state during tests. It offers tools for hosting SwiftUI components and injecting callbacks, enabling developers to verify the correctness and behavior of their user interfaces.
 
+## Package Structure
+
+This package consists of two main products:
+
+1. **ViewHosting**: This product is intended for use in your production code. It contains the necessary components to make your SwiftUI views testable.
+
+2. **ViewHostingTesting**: This product is designed for use in your test target. It provides the tools needed to host views and test dynamic properties like `@State`, `@Binding`, and others in a controlled testing environment.
+
 ## Key Features
 
 - **View Hosting**: APIs for hosting views during tests, ensuring controlled testing environments.
@@ -36,12 +44,12 @@ These alternatives ensure that even if the current method becomes unavailable, t
 
 ## Installation
 
-Add the following products to your targets:
+To use this package, add the following products to your targets:
 
-- Add `ViewHosting` to your production code target.
-- Add `ViewHostingTesting` to your unit testing target.
+- Add `ViewHosting` to your production code target. This will make your views testable.
+- Add `ViewHostingTesting` to your unit testing target. This provides the tools for hosting and testing your views.
 
-Import the framework in your files:
+Import the appropriate framework in your files:
 
 ```swift
 import ViewHosting // In production code
