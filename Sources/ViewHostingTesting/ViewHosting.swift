@@ -6,13 +6,6 @@ struct ViewHosting<T: View> {
 }
 
 private extension ViewHosting {
-    struct SendableView: @unchecked Sendable { let view: T }
-
-    enum ViewHostingError: Error {
-        case timeout
-        case missing
-    }
-
     static func host(content: () -> any View) {
         _ = _PreviewHost.makeHost(content: content()).previews
     }
@@ -23,13 +16,13 @@ private extension ViewHosting {
         try await ViewHosting().hosted(content: content)
     }
 
-    func hosted(content: () -> any View) async throws -> T {
+    func hosted(content: () -> some View) async throws -> T {
         Self.host {
-            content().onBody {
+            content().onBody(type: T.self) {
                 currentValue.send(SendableView(view: $0))
             }
         }
-        guard let view = currentValue.value?.view else {
+        guard let view = currentValue.value?.view as? T else {
             throw ViewHostingError.missing
         }
         return view
@@ -42,7 +35,7 @@ private extension ViewHosting {
         }
         for await bodyEvaluation in currentValue.dropFirst().values {
             timeoutTask.cancel()
-            guard let view = bodyEvaluation?.view else {
+            guard let view = bodyEvaluation?.view as? T else {
                 throw ViewHostingError.timeout
             }
             return view
