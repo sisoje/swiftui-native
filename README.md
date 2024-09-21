@@ -60,7 +60,7 @@ import ViewHosting // In production code
 
 ### Defining a View
 
-When defining your view, use the `@OnBody` property wrapper:
+When defining your view, use the `onBody` environment value:
 
 ```swift
 struct MyView: View {
