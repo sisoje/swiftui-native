@@ -3,8 +3,8 @@
 [![Swift](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml/badge.svg)](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml)
 
 - Requires Xcode 16
-- Builds using Swift 6 without any issues.
-- Supports all Apple platforms: `[.iOS(.v16), .macOS(.v13), .tvOS(.v16), .watchOS(.v9), .visionOS(.v1)]`
+- Builds using Swift 6 without any issues
+- Supports all platforms `[.iOS(.v16), .macOS(.v13), .tvOS(.v16), .watchOS(.v9), .visionOS(.v1)]`
 
 ## Introduction
 
@@ -63,14 +63,11 @@ struct MyView: View {
 To host and test a view:
 
 ```swift
-func testMyView() async throws {
-    let view = try await ViewHosting<MyView>().hosted {
-        MyView()
-    }
-
+func testHostedView() async throws {
+    let view = try await ViewHosting.hosted { TestView() }
     XCTAssertEqual(view.text, "")
-    view.text = "Hello, World!"
-    XCTAssertEqual(view.text, "Hello, World!")
+    await view.loadText()
+    XCTAssertEqual(view.text, "loaded")
 }
 ```
 
@@ -84,37 +81,6 @@ func testDynamicProperty() async throws {
     XCTAssertEqual(state.wrappedValue, 0)
     state.wrappedValue += 1
     XCTAssertEqual(state.wrappedValue, 1)
-}
-```
-
-### Handling Asynchronous Operations
-
-For views with asynchronous operations:
-
-```swift
-struct AsyncView: View {
-    @Environment(\.onBody) var onBody
-    @State var text = ""
-    
-    func load() async {
-        await MainActor.run {
-            text = "loaded"
-        }
-    }
-
-    var body: some View {
-        let _ = onBody(self)
-        Text(text)
-    }
-}
-
-func testAsyncView() async throws {
-    let view = try await ViewHosting<AsyncView>().hosted {
-        AsyncView()
-    }
-    XCTAssertEqual(view.text, "")
-    await view.load()
-    XCTAssertEqual(view.text, "loaded")
 }
 ```
 
