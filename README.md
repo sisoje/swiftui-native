@@ -3,7 +3,7 @@
 [![Swift](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml/badge.svg)](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml)
 
 - Requires Xcode 16
-- Builds using swift6 without any issues.
+- Builds using Swift 6 without any issues.
 - Supports all Apple platforms: `[.iOS(.v16), .macOS(.v13), .tvOS(.v16), .watchOS(.v9), .visionOS(.v1)]`
 
 ## Introduction
@@ -24,6 +24,7 @@ This package consists of two main products:
 - **State Access**: Easily access and verify view state during tests.
 - **Dynamic Property Testing**: Support for testing views with `@State`, `@Binding`, and other property wrappers.
 - **Asynchronous Testing**: Support for testing asynchronous operations in SwiftUI views.
+- **Performance Testing**: Includes performance tests for hosted views and dynamic properties.
 
 ## Installation
 
