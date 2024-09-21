@@ -27,21 +27,23 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: actions/cache@v4
+    - name: Cache Derived Data
+      uses: actions/cache@v4
       with:
-        path: |
-          ~/.swiftpm
-          ~/.xcode
-        key: ${{ runner.os }}-swiftpm-${{ hashFiles('**/Package.swift') }}
-        restore-keys: |
-          ${{ runner.os }}-swiftpm-
+        path: ./DerivedData
+        key: derived-data-${{ runner.os }}-${{ matrix.xcode-version }}-${{ matrix.platform }}-${{ hashFiles('**/Package.swift') }}
 
     - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: ${{ matrix.xcode-version }}
 
     - name: Testing ${{ matrix.platform }}
-      run: xcodebuild test -scheme ViewHosting-Package -destination '${{ env[matrix.platform] }}' -resultBundlePath TestResults.xcresult
+      run: |
+        xcodebuild test \
+          -scheme ViewHosting-Package \
+          -destination '${{ env[matrix.platform] }}' \
+          -derivedDataPath ./DerivedData \
+          -resultBundlePath TestResults.xcresult
 
     - uses: kishikawakatsumi/xcresulttool@v1
       with:
