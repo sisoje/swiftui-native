@@ -34,8 +34,6 @@ jobs:
         key: DerivedData-${{ matrix.xcode-version }}-${{ matrix.platform }}-${{ hashFiles('**/*.swift') }}
         restore-keys: |
             DerivedData-${{ matrix.xcode-version }}-${{ matrix.platform }}
-            DerivedData-${{ matrix.xcode-version }}
-            DerivedData-
 
     - uses: maxim-lobanov/setup-xcode@v1
       with:
