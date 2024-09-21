@@ -2,8 +2,9 @@
 
 [![Swift](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml/badge.svg)](https://github.com/sisoje/swiftui-view-hosting/actions/workflows/swift.yml)
 
-Requires: Xcode 16  
-Supporting platforms: `[.iOS(.v16), .macOS(.v13), .tvOS(.v16), .watchOS(.v9), .visionOS(.v1)]`
+- Requires Xcode 16
+- Builds using swift6 without any issues.
+- Supports all Apple platforms: `[.iOS(.v16), .macOS(.v13), .tvOS(.v16), .watchOS(.v9), .visionOS(.v1)]`
 
 ## Introduction
 
@@ -29,7 +30,7 @@ This package consists of two main products:
 This package currently relies on an undocumented trick in SwiftUI:
 
 ```swift
-private func host(content: () -> any View) {
+static func host(content: () -> any View) {
     _ = _PreviewHost.makeHost(content: content()).previews
 }
 ```

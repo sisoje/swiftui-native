@@ -3,8 +3,8 @@ import SwiftUI
 
 extension View {
     func onBody<T: View>(callback: @escaping (T) -> Void) -> some View {
-        environment(\.onBody, OnBody { anyView in
-            if let view = anyView as? T {
+        environment(\.onBody, { view in
+            if let view = view as? T {
                 callback(view)
             }
         })

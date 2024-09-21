@@ -13,7 +13,7 @@ private extension ViewHosting {
         case missing
     }
     
-    func host(content: () -> any View) {
+    static func host(content: () -> any View) {
         _ = _PreviewHost.makeHost(content: content()).previews
     }
 }
@@ -24,7 +24,7 @@ private extension ViewHosting {
     }
 
     func hosted(content: () -> any View) async throws -> T {
-        host {
+        Self.host {
             content().onBody { view in
                 currentValue.send(SendableView(view: view))
             }
