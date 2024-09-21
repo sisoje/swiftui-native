@@ -8,7 +8,7 @@
 
 ## Introduction
 
-This framework provides a streamlined solution for testing SwiftUI views, with a focus on hosting views and accessing their state during tests. It offers tools for hosting SwiftUI components and injecting callbacks, enabling developers to verify the correctness and behavior of their user interfaces.
+This framework provides a streamlined solution for **unit** testing SwiftUI views and dynamic properties, with a focus on hosting views and accessing their state during tests. It offers tools for hosting SwiftUI components and injecting callbacks, enabling developers to verify the correctness and behavior of their user interfaces.
 
 ## Package Structure
 
@@ -24,23 +24,6 @@ This package consists of two main products:
 - **State Access**: Easily access and verify view state during tests.
 - **Dynamic Property Testing**: Support for testing views with `@State`, `@Binding`, and other property wrappers.
 - **Asynchronous Testing**: Support for testing asynchronous operations in SwiftUI views.
-
-## Important Note
-
-This package currently relies on an undocumented trick in SwiftUI:
-
-```swift
-static func host(content: () -> any View) {
-    _ = _PreviewHost.makeHost(content: content()).previews
-}
-```
-
-While this implementation detail may be subject to change in future SwiftUI updates, it's important to note that there are alternative methods for hosting views that could be implemented if needed:
-
-1. **UIHostingController/NSHostingController**: These platform-specific hosting controllers can be used to integrate SwiftUI views into a UIKit or AppKit environment.
-2. **Dedicated Hosting App**: A separate app could be created specifically for testing, which would integrate test views into its view hierarchy.
-
-These alternatives ensure that even if the current method becomes unavailable, the core functionality of this package can be maintained through other hosting techniques. The package's design allows for relatively easy adaptation to new hosting methods if required.
 
 ## Installation
 
@@ -139,6 +122,23 @@ func testAsyncView() async throws {
 - **ViewHosting**: The `ViewHosting` struct manages the hosting and callback injection process.
 - **OnBody Property Wrapper**: `@OnBody` is used within views to enable state access during tests.
 - **Error Handling**: The framework includes custom error types for handling timeouts and missing views.
+
+## Important Note
+
+This package currently relies on an undocumented trick in SwiftUI:
+
+```swift
+static func host(content: () -> any View) {
+    _ = _PreviewHost.makeHost(content: content()).previews
+}
+```
+
+While this implementation detail may be subject to change in future SwiftUI updates, it's important to note that there are alternative methods for hosting views that could be implemented if needed:
+
+1. **UIHostingController/NSHostingController**: These platform-specific hosting controllers can be used to integrate SwiftUI views into a UIKit or AppKit environment.
+2. **Dedicated Hosting App**: A separate app could be created specifically for testing, which would integrate test views into its view hierarchy.
+
+These alternatives ensure that even if the current method becomes unavailable, the core functionality of this package can be maintained through other hosting techniques. The package's design allows for relatively easy adaptation to new hosting methods if required.
 
 ## Contributing
 
