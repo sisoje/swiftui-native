@@ -1,14 +1,16 @@
 import SwiftUI
 import ViewHosting
 
-struct AsyncTextView: View {
-    @OnBody<Self> var onBody
+struct TestView: View {
+    @Environment(\.onBody) private var onBody
     @State var text = ""
-    func load() async {
+    
+    func loadText() async {
         await MainActor.run {
             text = "loaded"
         }
     }
+    
     var body: some View {
         let _ = onBody(self)
     }

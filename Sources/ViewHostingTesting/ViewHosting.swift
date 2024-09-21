@@ -2,13 +2,20 @@ import Combine
 import SwiftUI
 
 struct ViewHosting<T: View> {
+    private let currentValue = CurrentValueSubject<SendableView?, Never>(nil)
+}
+
+private extension ViewHosting {
     struct SendableView: @unchecked Sendable { let view: T }
-    let currentValue = CurrentValueSubject<SendableView?, Never>(nil)
+    
+    func host(content: () -> any View) {
+        _ = _PreviewHost.makeHost(content: content()).previews
+    }
 }
 
 @MainActor extension ViewHosting {
-    private func host(content: () -> any View) {
-        _ = _PreviewHost.makeHost(content: content()).previews
+    static func hosted(content: () -> T) async throws -> T {
+        try await ViewHosting<T>().hosted(content: content)
     }
 
     func hosted(content: () -> any View) async throws -> T {

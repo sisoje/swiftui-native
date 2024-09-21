@@ -2,24 +2,16 @@ import SwiftUI
 @testable import ViewHostingTesting
 import XCTest
 
-extension EmptyHostedView {
-    func hosted() async throws -> Self {
-        try await ViewHosting().hosted { self }
-    }
-}
-
 @MainActor final class ViewHostingTests: XCTestCase {
     func testAsyncText() async throws {
-        let view = try await ViewHosting<AsyncTextView>().hosted {
-            AsyncTextView()
-        }
+        let view = try await ViewHosting.hosted { TestView() }
         XCTAssertEqual(view.text, "")
-        await view.load()
+        await view.loadText()
         XCTAssertEqual(view.text, "loaded")
     }
     
     func testHostedView() async throws {
-        _ = try await EmptyHostedView().hosted()
+        _ = try await ViewHosting.hosted { TestView() }
     }
 
     func testHostedDynamicProperty() async throws {
@@ -34,7 +26,7 @@ extension EmptyHostedView {
             let expectation = expectation(description: UUID().uuidString)
             Task {
                 do {
-                    _ = try await EmptyHostedView().hosted()
+                    _ = try await ViewHosting.hosted { TestView() }
                 } catch {
                     XCTFail()
                 }
