@@ -8,6 +8,11 @@ struct ViewHosting<T: View> {
 private extension ViewHosting {
     struct SendableView: @unchecked Sendable { let view: T }
     
+    enum ViewHostingError: Error {
+        case timeout
+        case missing
+    }
+    
     func host(content: () -> any View) {
         _ = _PreviewHost.makeHost(content: content()).previews
     }
