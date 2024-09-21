@@ -47,6 +47,6 @@ private extension ViewHosting {
             }
             return view
         }
-        fatalError()
+        throw ViewHostingError.timeout
     }
 }
