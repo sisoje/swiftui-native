@@ -19,7 +19,7 @@ jobs:
   test_hosting:
     strategy:
       matrix:
-        xcode-version: ['latest-stable', 'latest']
+        xcode-version: ['15', '16']
         platform: [macOS, iOS, tvOS, watchOS, visionOS]
 
     runs-on: macos-latest
