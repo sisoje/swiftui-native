@@ -90,23 +90,6 @@ func testDynamicProperty() async throws {
 - **OnBody Property Wrapper**: `@OnBody` is used within views to enable state access during tests.
 - **Error Handling**: The framework includes custom error types for handling timeouts and missing views.
 
-## Important Note
-
-This package currently relies on an undocumented trick in SwiftUI:
-
-```swift
-static func host(content: () -> any View) {
-    _ = _PreviewHost.makeHost(content: content()).previews
-}
-```
-
-While this implementation detail may be subject to change in future SwiftUI updates, it's important to note that there are alternative methods for hosting views that could be implemented if needed:
-
-1. **UIHostingController/NSHostingController**: These platform-specific hosting controllers can be used to integrate SwiftUI views into a UIKit or AppKit environment.
-2. **Dedicated Hosting App**: A separate app could be created specifically for testing, which would integrate test views into its view hierarchy.
-
-These alternatives ensure that even if the current method becomes unavailable, the core functionality of this package can be maintained through other hosting techniques. The package's design allows for relatively easy adaptation to new hosting methods if required.
-
 ## Contributing
 
 We welcome contributions! Please follow these steps:
