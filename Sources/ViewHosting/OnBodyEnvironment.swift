@@ -14,6 +14,6 @@ public extension EnvironmentValues {
     /// ```
     ///
     /// - Production: No-op (zero overhead).
-    /// - Tests: Captures view instance.
+    /// - Tests: Captures hosted view instance.
     @Entry var onBody: (any View) -> Void = { _ in }
 }

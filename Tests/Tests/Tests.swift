@@ -3,15 +3,27 @@ import SwiftUI
 import XCTest
 
 @MainActor final class Tests: XCTestCase {
-    func testHostedView() async throws {
-        let view = try await ViewHosting.hosted { TestView() }
-        XCTAssertEqual(view.text, "")
+    func testHostedViewChanges() async throws {
+        let content = HostedContent<TestView> {
+            TestView()
+                .environment(\.loadTextService) { "loaded" }
+        }
+        let view = try content.hosted()
+        XCTAssertEqual(view.text, "onAppear")
+        try await content.onBody()
+        XCTAssertEqual(view.text, "task")
         await view.loadText()
+        try await content.onBody()
         XCTAssertEqual(view.text, "loaded")
     }
 
-    func testHostedDynamicProperty() async throws {
-        let state = try await State(initialValue: 0).hosted()
+    func testHostedView() throws {
+        let view = try TestView().hosted()
+        XCTAssertEqual(view.text, "onAppear")
+    }
+
+    func testHostedDynamicProperty() throws {
+        let state = try State(initialValue: 0).hosted()
         XCTAssertEqual(state.wrappedValue, 0)
         state.wrappedValue += 1
         XCTAssertEqual(state.wrappedValue, 1)
@@ -19,31 +31,23 @@ import XCTest
 
     func testHostedViewPerformance() {
         measure {
-            let expectation = expectation(description: UUID().uuidString)
-            Task {
-                do {
-                    _ = try await ViewHosting.hosted { TestView() }
-                } catch {
-                    XCTFail()
-                }
-                expectation.fulfill()
+            do {
+                _ = try TestView().hosted()
             }
-            wait(for: [expectation], timeout: 1)
+            catch {
+                XCTFail()
+            }
         }
     }
 
     func testHostedDynamicPropertyPerformance() {
         measure {
-            let expectation = expectation(description: UUID().uuidString)
-            Task {
-                do {
-                    _ = try await State(wrappedValue: 1).hosted()
-                } catch {
-                    XCTFail()
-                }
-                expectation.fulfill()
+            do {
+                _ = try State(wrappedValue: 0).hosted()
             }
-            wait(for: [expectation], timeout: 1)
+            catch {
+                XCTFail()
+            }
         }
     }
 }
