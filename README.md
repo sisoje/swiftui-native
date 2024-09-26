@@ -8,54 +8,53 @@
 
 ## Introduction
 
-This framework provides a streamlined solution for **unit** testing SwiftUI views and dynamic properties, with a focus on hosting views and accessing their state during tests. It offers tools for hosting SwiftUI components and injecting callbacks, enabling developers to verify the correctness and behavior of their user interfaces.
+This framework provides a streamlined solution for **unit** testing SwiftUI views and dynamic properties, with a focus on hosting views and accessing their state during tests. It offers tools for hosting SwiftUI components and injecting dependencies, enabling developers to verify the correctness and behavior of their user interfaces without modifying production code.
 
 ## Package Structure
 
-This package consists of two main products:
+This package consists of a single product:
 
-1. **ViewHosting**: This product is intended for use in your production code. It contains a single file with the necessary component to make your SwiftUI views testable.
-
-2. **ViewHostingInternal**: This product is designed for use in your test target. It provides the tools needed to host views and test dynamic properties like `@State`, `@Binding`, and others in a controlled testing environment.
+- **ViewHosting**: This product is designed for use in your test target only. It provides the tools needed to host views and test dynamic properties like `@State`, `@Binding`, and others in a controlled testing environment.
 
 ## Key Features
 
 - **View Hosting**: APIs for hosting views during tests, ensuring controlled testing environments.
 - **State Access**: Easily access and verify view state during tests.
 - **Dynamic Property Testing**: Support for testing views with `@State`, `@Binding`, and other property wrappers.
-- **Asynchronous Testing**: Support for testing asynchronous operations in SwiftUI views.
-- **Performance Testing**: Includes performance tests for hosted views and dynamic properties.
+- **Dependency Injection**: Ability to inject dependencies and services during testing.
+- **Non-Intrusive**: No modifications required to production code.
 
 ## Installation
 
-To use this package, add the following products to your targets:
-
-- Add `ViewHosting` to your production code target. This will make your views testable.
-- Add `ViewHostingInternal` to your unit testing target. This provides the tools for hosting and testing your views.
-
-Import the appropriate framework in your files:
+To use this package, add the `ViewHosting` product to your test target in your `Package.swift` file:
 
 ```swift
-import ViewHosting // In production code
-@testable import ViewHostingInternal // In test code
+dependencies: [
+    .package(url: "https://github.com/yourusername/ViewHosting.git", from: "1.0.0"),
+],
+targets: [
+    .testTarget(
+        name: "YourTestTarget",
+        dependencies: ["ViewHosting"]
+    ),
+]
+```
+
+Then, import the framework in your test files:
+
+```swift
+import ViewHosting
+import XCTest
 ```
 
 ## Usage Guide
 
-### Defining a View
+### Preparing Your View for Testing
 
-When defining your view, use the `@Environment(\.onBody)` environment value and ensure it behaves correctly:
+To make your view testable, conform it to the `DynamicProperty` protocol in your test file:
 
 ```swift
-struct MyView: View {
-    @Environment(\.onBody) private var onBody
-    @State private var text = ""
-
-    var body: some View {
-        let _ = onBody(self)
-        TextField("Enter text", text: $text)
-    }
-}
+extension YourView: DynamicProperty {}
 ```
 
 ### Hosting and Testing a View
@@ -64,10 +63,14 @@ To host and test a view:
 
 ```swift
 func testHostedView() async throws {
-    let view = try await ViewHosting.hosted { TestView() }
-    XCTAssertEqual(view.text, "")
-    await view.loadText()
-    XCTAssertEqual(view.text, "loaded")
+    let injectedText = UUID().uuidString
+    let hosted = try TestView().hosted { view in
+        view.environment(\.loadTextService) {
+            injectedText
+        }
+    }
+    await hosted.loadText()
+    XCTAssertEqual(hosted.text, injectedText)
 }
 ```
 
@@ -76,8 +79,8 @@ func testHostedView() async throws {
 You can test dynamic properties independently:
 
 ```swift
-func testDynamicProperty() async throws {
-    let state = try await State(initialValue: 0).hosted()
+func testHostedState() throws {
+    let state = try State(initialValue: 0).hosted()
     XCTAssertEqual(state.wrappedValue, 0)
     state.wrappedValue += 1
     XCTAssertEqual(state.wrappedValue, 1)
@@ -86,9 +89,9 @@ func testDynamicProperty() async throws {
 
 ## Advanced Features
 
-- **ViewHosting**: The `ViewHosting` struct manages the hosting and callback injection process.
-- **OnBody Property Wrapper**: `@OnBody` is used within views to enable state access during tests.
-- **Error Handling**: The framework includes custom error types for handling timeouts and missing views.
+- **Dependency Injection**: Use the `hosted` method's modification closure to inject dependencies or modify the environment.
+- **Error Handling**: The framework includes a custom `HostingError` for handling missing properties.
+- **Performance Testing**: Includes performance tests for hosted views and dynamic properties.
 
 ## Contributing
 
