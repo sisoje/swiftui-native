@@ -34,7 +34,7 @@ jobs:
     - name: Testing ${{ matrix.platform }}
       run: |
         xcodebuild test \
-          -scheme ViewHosting-Package \
+          -scheme ViewHosting \
           -destination '${{ env[matrix.platform] }}' \
           -resultBundlePath TestResults.xcresult
 
