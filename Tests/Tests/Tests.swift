@@ -1,28 +1,22 @@
 import SwiftUI
-@testable import ViewHostingInternal
+import ViewHosting
 import XCTest
 
+extension TestView: DynamicProperty {}
+
 @MainActor final class Tests: XCTestCase {
-    func testHostedViewChanges() async throws {
-        let content = HostedContent<TestView> {
-            TestView()
-                .environment(\.loadTextService) { "loaded" }
+    func testHostedView() async throws {
+        let injectedText = UUID().uuidString
+        let hosted = try TestView().hosted { view in
+            view.environment(\.loadTextService) {
+                injectedText
+            }
         }
-        let view = try content.hosted()
-        XCTAssertEqual(view.text, "onAppear")
-        try await content.onBody()
-        XCTAssertEqual(view.text, "task")
-        await view.loadText()
-        try await content.onBody()
-        XCTAssertEqual(view.text, "loaded")
+        await hosted.loadText()
+        XCTAssertEqual(hosted.text, injectedText)
     }
 
-    func testHostedView() throws {
-        let view = try TestView().hosted()
-        XCTAssertEqual(view.text, "onAppear")
-    }
-
-    func testHostedDynamicProperty() throws {
+    func testHostedState() throws {
         let state = try State(initialValue: 0).hosted()
         XCTAssertEqual(state.wrappedValue, 0)
         state.wrappedValue += 1
@@ -40,7 +34,7 @@ import XCTest
         }
     }
 
-    func testHostedDynamicPropertyPerformance() {
+    func testHostedStatePerformance() {
         measure {
             do {
                 _ = try State(wrappedValue: 0).hosted()

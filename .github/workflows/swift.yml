@@ -19,7 +19,6 @@ jobs:
   test_hosting:
     strategy:
       matrix:
-        xcode-version: ['16']
         platform: [macOS, iOS, tvOS, watchOS, visionOS]
 
     runs-on: macos-latest
@@ -27,16 +26,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: ${{ matrix.xcode-version }}
-
     - name: Testing ${{ matrix.platform }}
       run: |
         xcodebuild test \
           -scheme ViewHosting-Package \
           -destination '${{ env[matrix.platform] }}' \
-          -derivedDataPath ./DerivedData \
           -resultBundlePath TestResults.xcresult
 
     - uses: kishikawakatsumi/xcresulttool@v1
