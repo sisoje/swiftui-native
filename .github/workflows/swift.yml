@@ -20,9 +20,9 @@ jobs:
     strategy:
       matrix:
         xcode-version: ['latest-stable']
-        platform: [macOS, iOS, tvOS, watchOS]
+        platform: [macOS, iOS, tvOS, watchOS, visionOS]
 
-    runs-on: macos-latest
+    runs-on: macos-15
     
     steps:
     - uses: actions/checkout@v4
