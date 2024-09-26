@@ -10,10 +10,10 @@ on:
     
 env:
   macOS: 'platform=macOS'
-  watchOS: 'generic/platform=watchOS Simulator'
-  iOS: 'generic/platform=iOS Simulator'
-  tvOS: 'generic/platform=tvOS Simulator'
-  visionOS: 'generic/platform=visionOS Simulator'
+  watchOS: 'platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)'
+  iOS: 'platform=iOS Simulator,name=iPhone 16'
+  tvOS: 'platform=tvOS Simulator,name=Apple TV'
+  visionOS: 'platform=visionOS Simulator,name=Apple Vision Pro'
 
 jobs:
   test_hosting:
